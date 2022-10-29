@@ -70,18 +70,31 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             right_ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
 
             # Calculate angle
+            
             left_elbow_angle = calculate_angle(left_shoulder, left_elbow, left_wrist)
-            angles.append(left_elbow_angle)
+            #angles.append(left_elbow_angle)
+
             right_elbow_angle = calculate_angle(right_shoulder, right_elbow, right_wrist)
-            angles.append(right_elbow_angle)
-            left_knee_angle = calculate_angle(left_hip, left_knee, left_ankle)
-            angles.append(left_knee_angle)
-            right_knee_angle = calculate_angle(right_hip, right_knee, right_ankle)
-            angles.append(right_elbow_angle)
-            left_shoulder_angle = calculate_angle(left_hip, left_shoulder, left_elbow)
-            angles.append(left_shoulder_angle)
+            #angles.append(right_elbow_angle)
+
             right_shoulder_angle = calculate_angle(right_hip, right_shoulder, right_elbow)
             angles.append(right_shoulder_angle)
+
+            center = [int((left_shoulder[0]+right_shoulder[0])/2), int((left_shoulder[1]+right_shoulder[1])/2)]
+            backbone_angle = calculate_angle(center, right_hip, right_ankle)
+            angles.append(backbone_angle)
+
+            left_knee_angle = calculate_angle(left_hip, left_knee, left_ankle)
+            #angles.append(left_knee_angle)
+            
+            right_knee_angle = calculate_angle(right_hip, right_knee, right_ankle)
+            angles.append(right_knee_angle)
+            
+            left_shoulder_angle = calculate_angle(left_hip, left_shoulder, left_elbow)
+            #angles.append(left_shoulder_angle)
+            
+            right_betweenlegs_angle = calculate_angle(right_knee, right_hip, left_knee)
+            angles.append(right_betweenlegs_angle)
 
             
             # Visualize angle
