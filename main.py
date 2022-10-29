@@ -169,9 +169,10 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
         
         cv2.imshow('Mediapipe Feed', image)
 
-        with open('keypoints'+str(numb)+'.json', 'a') as f:
+        with open('data/keypoints'+str(numb)+'.json', 'w') as f:
             if angles != []:
                 json.dump(angles, f)
+                numb += 1
             else:
                 pass
 
