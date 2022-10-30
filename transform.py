@@ -3,8 +3,8 @@ import math
 import os
 import glob
 
-all_angles = []
-
+all_angles = {}
+angles = []
 #ler todos os arquivos json
 for file in glob.glob("data/*.json"):
     f = open(file)
@@ -13,6 +13,9 @@ for file in glob.glob("data/*.json"):
     
     #para cada arquivo json, ler todos os frames
     #para cada frame, ler todas as juntas
-    all_angles.append(data)
+    angles.append(data)
+
+all_angles['agachamento'] = angles
+
 with open('all_angles.json', 'w') as outfile:
     json.dump(all_angles, outfile)

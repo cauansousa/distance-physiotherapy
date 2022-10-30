@@ -4,11 +4,8 @@ import mediapipe as mp
 import numpy as np
 import json
 
-
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
-
-exercise = input("qual ex deseja fazer?")
 
 def calculate_angle(a,b,c):
     a = np.array(a) # First
@@ -124,6 +121,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                                 )
             
             # Curl counter logic
+            """
             if exercise == 'biceps':
                 if left_elbow_angle > 100 and right_elbow_angle > 100:
                     stage = "down"
@@ -144,7 +142,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                     counter += 1
                 if left_shoulder_angle < 120:
                     stage = 'down'
-                       
+            """           
         except:
             pass
             
