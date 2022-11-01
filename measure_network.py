@@ -8,7 +8,6 @@ from keras.layers import Dense
 
 kf = KFold(n_splits=5)
 
-
 Xt=[]
 yt=[]
 
@@ -105,30 +104,30 @@ for train_indexes, test_indexes in kf.split(X):
     # with open("output_measure_y.json", 'w') as f:
     #     dump(y_test, f) 
 
-    model = Sequential()
-    model.add(Dense(10, input_dim=7, activation='relu'))
-    model.add(Dense(12, activation='relu'))
-    model.add(Dense(10, activation='relu'))
-    model.add(Dense(8, activation='relu'))
-    model.add(Dense(10, activation='relu'))
-    model.add(Dense(12, activation='relu'))
-    model.add(Dense(13, activation='relu'))
-    model.add(Dense(8, activation='relu'))
-    model.add(Dense(6, activation='softmax'))
+    # model = Sequential()
+    # model.add(Dense(10, input_dim=7, activation='relu'))
+    # model.add(Dense(12, activation='relu'))
+    # model.add(Dense(10, activation='relu'))
+    # model.add(Dense(8, activation='relu'))
+    # model.add(Dense(10, activation='relu'))
+    # model.add(Dense(12, activation='relu'))
+    # model.add(Dense(13, activation='relu'))
+    # model.add(Dense(8, activation='relu'))
+    # model.add(Dense(6, activation='softmax'))
 
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    # model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #epochs=250
     #model.fit(X, y, epochs=120, batch_size=5)
-    model.fit(X_train, y_train, epochs=120, batch_size=5)
+    #model.fit(X_train, y_train, epochs=120, batch_size=5)
 
-    _, accuracy = model.evaluate(X, y)
-    print('Accuracy: %.2f' % (accuracy*100))
+    #_, accuracy = model.evaluate(X, y)
+    #print('Accuracy: %.2f' % (accuracy*100))
 
-    model.save("measureModel3")
+    #model.save("measureModel3")
 
 
 # def test():
-    # model = load_model('measureModel3')
+    model = load_model('measureModel3')
 
     # name_of_file="output_measure_x"
     # name_of_file_measure="output_measure_x"
@@ -137,31 +136,31 @@ for train_indexes, test_indexes in kf.split(X):
     # data_loaded = load(f)
     # f.close()
 
-    # f = open('output_'+name_of_file_detection+'.json')
+    # f = open('output_detection_x.json')
     # data_labeled = load(f)
     # f.close()
 
     one_result=[]
 
-
     classes = {'agachamento':[0,0,1], 'extensaoquadril': [0,1,0], 'flexaojoelho': [1,0,0], 'no_detection': [0,0,0]}
 
     data_loaded = X_test
+
     data_labeled = y_test
 
     index=0
     for g in data_loaded:
         aux=[]
-        for fr in classes[data_labeled[index][1]]:
-            aux.append(fr)
+        for fr in data_labeled[index][0:3]:
+            aux.append(float(fr))
 
         index=index+1
-        for f in g:
+        for f in g[2:]:
             aux.append(f)
-        one_result.append(aux)    
+        one_result.append(aux)   
 
 
-    predictions = (model.predict(one_result) > 0.7).astype(int)
+    predictions = (model.predict(one_result[0]) > 0.7).astype(int)
 
     output_array=[]
 

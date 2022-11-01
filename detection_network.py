@@ -40,6 +40,7 @@ def convertNoiseToDetection(data):
     return data_array
 
 
+
 all_datas=[]
 
 classes = {'agachamento':[0,0,1], 'extensaoquadril': [0,1,0], 'flexaojoelho': [1,0,0]}
