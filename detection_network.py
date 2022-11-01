@@ -39,7 +39,7 @@ def convertNoiseToDetection(data):
     data_array['flexaojoelho']=flexaojoelho
     return data_array
 
-"""
+
 all_datas=[]
 
 classes = {'agachamento':[0,0,1], 'extensaoquadril': [0,1,0], 'flexaojoelho': [1,0,0]}
@@ -139,5 +139,5 @@ for i in range(len(data_test)):
 with open("output_"+name_of_file, 'w') as f:
     json.dump(write_detection, f)
     
-
-#model.save("detectionModel3")
+"""
+model.save("detectionModel3")

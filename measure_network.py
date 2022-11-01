@@ -5,7 +5,6 @@ from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense
 
-"""
 X=[]
 y=[]
 
@@ -157,6 +156,7 @@ for i in range(50):
 print(number_of_true)
 print(number_of_false)
 print(100*number_of_true/(number_of_false+number_of_true))
+"""
 
 
 
