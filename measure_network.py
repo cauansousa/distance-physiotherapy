@@ -60,7 +60,7 @@ for i in data_test:
     Xt.append(input_values)
     yt.append(output_values)
 
-with open("output_measure_x.json", 'w') as f:
+with open("input_measure_x.json", 'w') as f:
     json.dump(Xt, f)
 with open("output_measure_y.json", 'w') as f:
     json.dump(yt, f) 
