@@ -1,45 +1,12 @@
 import json
 from sklearn.utils import shuffle
 from numpy import loadtxt
+from numpy import array, loadtxt
+from sklearn.model_selection import KFold
 from keras.models import Sequential, load_model
 from keras.layers import Dense
 
-def convertNoiseToDetection(data):
-    agachamento=[]
-    extensaoquadril=[]
-    flexaojoelho=[]
-    for i in data:
-        tp=i[0]
-        if tp[0]==1 and tp[1] ==0 and tp[2] ==0:
-            aux=[]
-            aux.append(i[1])
-            aux.append(i[2])
-            aux.append(i[3])
-            aux.append(i[4])
-            flexaojoelho.append(aux)
-            
-        if tp[0]==0 and tp[1] ==1 and tp[2] ==0:
-            aux=[]
-            aux.append(i[1])
-            aux.append(i[2])
-            aux.append(i[3])
-            aux.append(i[4])
-            extensaoquadril.append(aux)
-            
-        if tp[0]==0 and tp[1] ==0 and tp[2] ==1:
-            aux=[]
-            aux.append(i[1])
-            aux.append(i[2])
-            aux.append(i[3])
-            aux.append(i[4])
-            agachamento.append(aux)
-    data_array = {'agachamento':[], 'extensaoquadril': [], 'flexaojoelho': []}
-    data_array['agachamento']=agachamento
-    data_array['extensaoquadril']=extensaoquadril
-    data_array['flexaojoelho']=flexaojoelho
-    return data_array
-
-
+kf = KFold(n_splits=5)
 
 all_datas=[]
 
@@ -50,7 +17,7 @@ data = json.load(f)
 
 #data=convertNoiseToDetection(data)
 
-
+count = 1
 for label in data:
     for features in data[label]:
         specific_values=[]
@@ -60,9 +27,7 @@ for label in data:
         all_datas.append(specific_values)
             
 
-
 all_datas=shuffle(all_datas, random_state=0)
-
 
 X=[]
 y=[]
@@ -76,69 +41,58 @@ for i in all_datas:
             y.append(classes[i[j]])
     X.append(content_values)
 
-pr=int(len(X)*0.1)
-Dx=[]
-Dy=[]
-Xt=[]
-Yt=[]
+X_arr = array(X)
+y_arr = array(y)
 
-for lk in range(0,pr,1):
-    Xt.append(X[lk])
-    Yt.append(y[lk])
+for train_indexes, test_indexes in kf.split(X):
+    X_train = X_arr[train_indexes]
+    y_train = y_arr[train_indexes]
 
-for lk in range(pr,len(X),1):
-    Dx.append(X[lk])
-    Dy.append(y[lk])
+    X_test = X_arr[test_indexes]
+    y_test = y_arr[test_indexes]
 
-with open("output_detection_x.json", 'w') as f:
-    json.dump(Xt, f)
-with open("output_detection_y.json", 'w') as f:
-    json.dump(Yt, f)    
-
-
-model = Sequential()
-model.add(Dense(10, input_dim=4, activation='relu'))
-model.add(Dense(8, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(8, activation='relu'))
-model.add(Dense(3, activation='softmax'))
+    model = Sequential()
+    model.add(Dense(10, input_dim=4, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(10, activation='relu'))
+    model.add(Dense(10, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(3, activation='softmax'))
 
 
 
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-#epochs=250 batch_size=8
-#model.fit(X, y, epochs=250, batch_size=8)
-model.fit(Dx, Dy, epochs=250, batch_size=8)
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    #epochs=250 batch_size=8
+    #model.fit(X, y, epochs=250, batch_size=8)
+    model.fit(X_train, y_train, epochs=250, batch_size=8)
 
-_, accuracy = model.evaluate(Dx, Dy)
-print('Accuracy: %.2f' % (accuracy*100))
+    _, accuracy = model.evaluate(X_train, y_train)
+    print('Accuracy: %.2f' % (accuracy*100))
 
-"""
-name_of_file="output_detection_x.json"
+    name_of_file="detection.json"
 
-f = open(name_of_file)
-data_test = json.load(f)
-f.close()
+    # f = open(name_of_file)
+    # data_test = json.load(f)
+    # f.close()
 
-model = load_model('detectionModel3')
+    model = load_model('detectionModel3')
 
-predictions = (model.predict(data_test) > 0.5).astype(int)
+    predictions = (model.predict(X_test) > 0.5).astype(int)
 
-write_detection=[]
+    write_detection=[]
 
-for i in range(len(data_test)):
-    if(predictions[i][0] == 0 and predictions[i][1] == 0 and predictions[i][2] == 1):   
-        write_detection.append([i,"agachamento"])
-    elif(predictions[i][0] == 0 and predictions[i][1] == 1 and predictions[i][2] == 0):   
-        write_detection.append([i,"extensaoquadril"])
-    elif(predictions[i][0] == 1 and predictions[i][1] == 0 and predictions[i][2] == 0):   
-        write_detection.append([i,"flexaojoelho"])    
-    else:   
-        write_detection.append([i,"no_detection"])
+    for i in range(len(X_test)):
+        if(predictions[i][0] == 0 and predictions[i][1] == 0 and predictions[i][2] == 1):   
+            write_detection.append([i,"agachamento"])
+        elif(predictions[i][0] == 0 and predictions[i][1] == 1 and predictions[i][2] == 0):   
+            write_detection.append([i,"extensaoquadril"])
+        elif(predictions[i][0] == 1 and predictions[i][1] == 0 and predictions[i][2] == 0):   
+            write_detection.append([i,"flexaojoelho"])    
+        else:   
+            write_detection.append([i,"no_detection"])
 
-with open("output_"+name_of_file, 'w') as f:
-    json.dump(write_detection, f)
-    
-"""
-model.save("detectionModel3")
+    with open("output_"+str(count)+name_of_file, 'w') as f:
+        json.dump(write_detection, f)
+        
+    model.save("detectionModel"+str(count)+"acuracia"+str(accuracy*100))
+    count+=1
