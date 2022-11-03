@@ -59,23 +59,13 @@ for train_indexes, test_indexes in kf.split(X):
     model.add(Dense(8, activation='relu'))
     model.add(Dense(3, activation='softmax'))
 
-
-
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    #epochs=250 batch_size=8
-    #model.fit(X, y, epochs=250, batch_size=8)
+
     model.fit(X_train, y_train, epochs=250, batch_size=8)
 
     _, accuracy = model.evaluate(X_train, y_train)
     print('Accuracy: %.2f' % (accuracy*100))
 
-    name_of_file="detection.json"
-
-    # f = open(name_of_file)
-    # data_test = json.load(f)
-    # f.close()
-
-    model = load_model('detectionModel3')
 
     predictions = (model.predict(X_test) > 0.5).astype(int)
 
@@ -91,7 +81,7 @@ for train_indexes, test_indexes in kf.split(X):
         else:   
             write_detection.append([i,"no_detection"])
 
-    with open("output_"+str(count)+name_of_file, 'w') as f:
+    with open("output_"+str(count), 'w') as f:
         json.dump(write_detection, f)
         
     model.save("detectionModel"+str(count)+"acuracia"+str(accuracy*100))
